@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.glassfish.grizzly:grizzly-framework:tests:2.0.1-b2">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/glassfish/grizzly/grizzly-framework/2.0.1-b2/grizzly-framework-2.0.1-b2-tests.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/glassfish/grizzly/grizzly-framework/2.0.1-b2/grizzly-framework-2.0.1-b2-test-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/glassfish/grizzly/grizzly-framework/2.0.1-b2/grizzly-framework-2.0.1-b2-test-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
