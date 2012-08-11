@@ -1,0 +1,7 @@
+ <classloading xmlns="urn:jboss:classloading:1.0"   
+               name="semanticvectors-1.0.war"
+               domain="revelator_domain" 
+               parent-domain="DefaultDomain"  
+               export-all="NON_EMPTY"   
+               import-all="true">   
+ </classloading>

@@ -1,0 +1,7 @@
+.classpath
+.project
+.settings/
+.idea/
+wordsuggestion.iml
+target/
+.svn/

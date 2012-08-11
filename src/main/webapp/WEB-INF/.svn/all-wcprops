@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ris/semtech/!svn/ver/37/trunk/CUT/Revelator/src/main/webapp/WEB-INF
+END
+jboss-classloading.xml
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/ris/semtech/!svn/ver/37/trunk/CUT/Revelator/src/main/webapp/WEB-INF/jboss-classloading.xml
+END
+jboss-web.xml
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/ris/semtech/!svn/ver/4/trunk/CUT/Revelator/src/main/webapp/WEB-INF/jboss-web.xml
+END
+web.xml
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/ris/semtech/!svn/ver/9/trunk/CUT/Revelator/src/main/webapp/WEB-INF/web.xml
+END
