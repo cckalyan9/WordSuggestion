@@ -1,6 +1,7 @@
 package com.kikin.wordsuggestion.nlp;
 
 import com.google.common.base.Joiner;
+import com.kikin.wordsuggestion.utils.SuggestionScore;
 import com.kikin.wordsuggestion.vo.Suggestion;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -109,6 +110,44 @@ public class SuggestionGeneratorImplTest {
         Collections.sort(suggestions);
 
         logger.info(Joiner.on("\n").join(suggestions));
+
+
+    }
+
+
+    @Test
+    public void testExtractSuggestion6() throws Exception {
+
+        final List<Suggestion> suggestions = suggestionGenerator.extractSuggestion(
+                kikinNLPModule.processText(
+                        "On the face of it, Senator Harry Reid’s explosive but flimsily sourced claim that Mitt Romney paid no income tax seems preposterous."));
+
+        logger.info(Joiner.on("\n").join(suggestions));
+
+
+        Collections.sort(suggestions);
+
+        logger.info(Joiner.on("\n").join(suggestions));
+
+
+    }
+
+
+    @Test
+    public void testScoringLogic() {
+
+        final List<Suggestion> suggestions = suggestionGenerator.extractSuggestion(
+                kikinNLPModule.processText(
+                        "On the face of it, Senator Harry Reid’s explosive but flimsily sourced claim that Mitt Romney paid no income tax seems preposterous."));
+
+
+        for (Suggestion suggestion : suggestions) {
+            logger.info(suggestion.toString());
+        }
+
+        for (Suggestion suggestion : suggestions) {
+            logger.info("Suggestion {} and score {}", suggestion.getTerm(), SuggestionScore.score(suggestion));
+        }
 
 
     }

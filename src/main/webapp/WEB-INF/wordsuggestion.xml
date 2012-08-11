@@ -1,0 +1,7 @@
+<!--
+  Context fragment for deploying MyWebApp.war
+ -->
+<Context path="/wordsuggestion" docBase="webapps/wordsuggestion-1.0.war"
+         debug="0" privileged="true">
+
+</Context>

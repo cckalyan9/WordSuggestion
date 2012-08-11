@@ -5,6 +5,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.kikin.wordsuggestion.vo.Suggestion;
 import com.kikin.wordsuggestion.vo.filters.NounPosFilter;
 import com.kikin.wordsuggestion.vo.filters.SuggestionTextFilter;
@@ -57,15 +58,15 @@ public class SuggestionGeneratorImpl implements SuggestionGenerator {
     public List<Suggestion> extractSuggestion(Annotation annotation) {
 
         List<Suggestion> suggestionList = Lists.newArrayList();
-
         Map<Integer, Suggestion> suggestions = Maps.newHashMap();
         extractNouns(annotation, suggestions);
         final List<Suggestion> nounPhrases = Lists.newArrayList();
         extractNounPhrases(annotation, suggestions, nounPhrases);
-        suggestionList.addAll(suggestions.values());
+        suggestionList.addAll(Sets.newHashSet(suggestions.values()));
 
         final SuggestionTextFilter suggestionTextFilter = new SuggestionTextFilter(
                 Collections2.transform(suggestionList, getSuggestionTexts));
+
 
         final Collection<Suggestion> nounPhrasesNotIncluded = Collections2.filter(nounPhrases,
                 suggestionTextFilter);
@@ -118,23 +119,31 @@ public class SuggestionGeneratorImpl implements SuggestionGenerator {
 
                 final IndexedWord source = semanticGraphEdge.getSource();
                 final IndexedWord target = semanticGraphEdge.getTarget();
-                logger.trace("Found relationship between {} and target {}", source,
+                logger.info("Found relationship between {} and target {}", source,
                         target);
                 final GrammaticalRelation relation = semanticGraphEdge.getRelation();
-                logger.trace("The relationship is {}", relation);
+                logger.info("The relationship is {}", relation);
 
                 if (relation.equals(GrammaticalRelation.valueOf(NOUN_COMPOUND_MODIFIER))) {
 
                     final Integer sourceOffset = source.get(CoreAnnotations.TokenBeginAnnotation.class);
                     final Integer targetOffSet = target.get(CoreAnnotations.TokenBeginAnnotation.class);
+                    logger.info("The sourceoffset {} and targetoffset {}", sourceOffset, targetOffSet);
+                    final Suggestion sourceSuggestion = suggestions.get(sourceOffset);
+                    final Suggestion targetSuggestion = suggestions.get(targetOffSet);
+                    if (sourceSuggestion != null && targetSuggestion != null) {
+                        final Suggestion merge = sourceSuggestion.merge(targetSuggestion);
+                        // Add this new entry in place of the individual entries.
+                        // Essentially we are adding duplicate copies, for the equals method to handle this retropectively. This reduces the
+                        //programming complexity.
+                        suggestions.put(Math.min(sourceOffset, targetOffSet), merge);
+                        suggestions.put(Math.max(sourceOffset, targetOffSet), merge);
+                        /*   //remove the other entry
 
-                    final Suggestion merge = suggestions.get(sourceOffset).merge(suggestions.get(targetOffSet));
-                    // Add this new entry in place of the individual entries.
-                    suggestions.put(Math.min(sourceOffset, targetOffSet), merge);
-                    //remove the other entry
+                        final int removedIndex = Math.max(sourceOffset, targetOffSet);
+                        suggestions.remove(removedIndex);*/
+                    }
 
-                    final int removedIndex = Math.max(sourceOffset, targetOffSet);
-                    suggestions.remove(removedIndex);
 
                 }
 

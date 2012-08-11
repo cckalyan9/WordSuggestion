@@ -1,6 +1,10 @@
 package com.kikin.wordsuggestion.vo;
 
+import com.google.common.collect.Lists;
 import com.kikin.wordsuggestion.utils.SuggestionScore;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,38 +19,57 @@ public class Suggestion implements Comparable<Suggestion> {
     private static final String PROPER_NOUN = "NNP";
     private static final String NO_VALUE = "EMPTY";
     private static final int NO_OFFSET = -1;
-    private final String term;
+
+    private SuggestionTerm suggestionTerm;
+
+    private List<SuggestionTerm> mergedSuggestions;
+
 
     //Part of Speech tagging.
     private final String posTag;
-
     //Named Entity extraction.
     private final String nerTag;
 
 
-    //Positional information.
-    private final int offset;
-
-
-    private Suggestion(String term, String posTag, String nerTag, int offset) {
-        this.term = term;
+    private Suggestion(SuggestionTerm term, String posTag, String nerTag) {
+        this.suggestionTerm = term;
         this.posTag = posTag;
         this.nerTag = nerTag;
-        this.offset = offset;
+        mergedSuggestions = Lists.newArrayList(suggestionTerm);
+
     }
 
     public static Suggestion createSuggestion(String term, String posTag, String nerTag, int offset) {
-        return new Suggestion(term, posTag, nerTag, offset);
+        return new Suggestion(new SuggestionTerm(term, offset), posTag, nerTag);
+    }
+
+    public static Suggestion createSuggestionForMerge(String term, String posTag, String nerTag, int offset,
+                                                      List<SuggestionTerm> mergedSuggestions) {
+        final Suggestion suggestion = new Suggestion(new SuggestionTerm(term, offset), posTag, nerTag);
+        suggestion.mergedSuggestions = mergedSuggestions;
+        return suggestion;
     }
 
     public static Suggestion createSuggestionWithJustTerm(String term) {
-        return new Suggestion(term, NO_VALUE, NO_VALUE, NO_OFFSET);
+        return new Suggestion(new SuggestionTerm(term, NO_OFFSET), NO_VALUE, NO_VALUE);
     }
 
 
     public String getTerm() {
-        return term;
+
+        // Greater than indicates merge performed on this object.
+        if (mergedSuggestions.size() > 1) {
+
+            Collections.sort(mergedSuggestions);
+            StringBuilder termBuilder = new StringBuilder();
+            for (SuggestionTerm mergedSuggestion : mergedSuggestions) {
+                termBuilder.append(mergedSuggestion.getTerm()).append(" ");
+            }
+            return termBuilder.toString();
+        }
+        return suggestionTerm.term;
     }
+
 
     public String getPosTag() {
         return posTag;
@@ -57,7 +80,7 @@ public class Suggestion implements Comparable<Suggestion> {
     }
 
     public int getOffset() {
-        return offset;
+        return suggestionTerm.offset;
     }
 
     /**
@@ -89,28 +112,26 @@ public class Suggestion implements Comparable<Suggestion> {
      */
     public Suggestion merge(Suggestion other) {
 
-        int newOffSet;
-        String newTerm;
+        //int newOffSet;
         String newNerTag;
         String newPosTag;
-        if (this.offset < other.offset) {
-
+        /* if (this.suggestionTerm.offset < other.suggestionTerm.offset) {
             newOffSet = this.getOffset();
-            newTerm = this.getTerm() + " " + other.getTerm();
         } else {
             newOffSet = other.getOffset();
-            newTerm = other.getTerm() + " " + this.getTerm();
-        }
-
-
+        }*/
         newNerTag = (this.getNerTag() == null) ? other.getNerTag() : this.getNerTag();
-
         // Pos tag is slightly tricky. Although both of them have to be noun constructs, Proper Nouns are rated high
         // than regular nouns.
         newPosTag = (this.getPosTag() != null && this.getPosTag().startsWith(PROPER_NOUN)) ? this.getPosTag() : other
                 .getPosTag();
 
-        return new Suggestion(newTerm, newPosTag, newNerTag, newOffSet);
+        final Suggestion suggestion = Suggestion.createSuggestionForMerge(this.getTerm(), newPosTag, newNerTag,
+                this.getOffset(), mergedSuggestions);
+
+
+        suggestion.mergedSuggestions.add(new SuggestionTerm(other.getTerm(), other.getOffset()));
+        return suggestion;
 
     }
 
@@ -122,26 +143,26 @@ public class Suggestion implements Comparable<Suggestion> {
 
         Suggestion that = (Suggestion) o;
 
-        if (offset != that.offset) return false;
-        if (!term.equals(that.term)) return false;
+        if (suggestionTerm.offset != that.suggestionTerm.offset) return false;
+        if (!suggestionTerm.term.equals(that.suggestionTerm.term)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = term.hashCode();
-        result = 31 * result + offset;
+        int result = suggestionTerm.term.hashCode();
+        result = 31 * result + suggestionTerm.offset;
         return result;
     }
 
     @Override
     public String toString() {
         return "Suggestion{" +
-                "term='" + term + '\'' +
-                ", posTag='" + posTag + '\'' +
-                ", nerTag='" + nerTag + '\'' +
-                ", offset=" + offset +
+                "term='" + getTerm() + '\'' +
+                ", posTag='" + getPosTag() + '\'' +
+                ", nerTag='" + getNerTag() + '\'' +
+                ", offset=" + getOffset() +
                 '}';
     }
 
