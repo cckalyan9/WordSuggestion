@@ -17,7 +17,7 @@ import java.util.List;
 public class Suggestion implements Comparable<Suggestion> {
 
     private static final String PROPER_NOUN = "NNP";
-    private static final String NO_VALUE = "EMPTY";
+    private static final String NO_VALUE = "O";
     private static final int NO_OFFSET = -1;
 
     private SuggestionTerm suggestionTerm;
@@ -84,18 +84,16 @@ public class Suggestion implements Comparable<Suggestion> {
     }
 
     /**
-     * Usage of == equality check is conscious.
-     *
      * @return
      */
     public boolean hasPosTag() {
 
-        return (this.getPosTag() == NO_VALUE) ? false : true;
+        return (this.getPosTag().equals(NO_VALUE)) ? false : true;
     }
 
     public boolean hasNerTag() {
 
-        return (this.getNerTag() == NO_VALUE) ? false : true;
+        return (this.getNerTag().equals(NO_VALUE)) ? false : true;
     }
 
     public boolean hasOffSetInformation() {

@@ -47,6 +47,15 @@ public class WordHighligterCoreResource {
 
     }
 
+
+    @GET
+    @Path("/test")
+    @Produces({MediaType.APPLICATION_JSON, "application/x-javascript"})
+    public final String test() {
+
+        return "HELLO WORLD";
+    }
+
     /**
      * @param selectedText     - The text highlighted in the touch based device
      * @param context          - The context of the highlighted text.

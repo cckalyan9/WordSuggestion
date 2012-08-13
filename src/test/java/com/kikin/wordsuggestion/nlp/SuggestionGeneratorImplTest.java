@@ -1,8 +1,13 @@
 package com.kikin.wordsuggestion.nlp;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.kikin.wordsuggestion.utils.SuggestionScore;
+import com.kikin.wordsuggestion.utils.TestVariables;
 import com.kikin.wordsuggestion.vo.Suggestion;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -12,8 +17,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,108 +31,118 @@ import java.util.List;
  * ${END}$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/wordhighlighter.xml"})
+@ContextConfiguration(locations = {"/wordhighlighter-test.xml"})
+
 public class SuggestionGeneratorImplTest {
 
     private static Logger logger = LoggerFactory.getLogger(SuggestionGeneratorImplTest.class);
+    private static final String SUGGESTION_DELIMITER = "-->";
+
+    private static final String SUGGESTION_EXPECTATION_DELIMITER = "&&";
+
 
     @Autowired
     private SuggestionGenerator suggestionGenerator;
 
+    @Autowired
+    private TestVariables testVariables;
+
+
+    private Map<String, List<String>> suggestionMap = Maps.newHashMap();
     //TODO: Replace concrete implementation with Stub. The Context returned by Standford NLP is very hard to Mock.
     @Qualifier("nlpModuleWithAllProcesses")
     @Autowired
     private KikinNLPModule kikinNLPModule;
 
+
+    @Before
+    public void loadSuggestionsFromPropertyFile() {
+
+        if (testVariables.getSuggestions() != null) {
+            final String[] split = testVariables.getSuggestions().split(SUGGESTION_DELIMITER);
+
+            for (int i = 0; i < split.length; i++) {
+                String individualSuggestion = split[i];
+
+                if (individualSuggestion != null) {
+                    final String[] split1 = individualSuggestion.split(SUGGESTION_EXPECTATION_DELIMITER);
+                    String key = null;
+                    for (int j = 0; j < split1.length; j++) {
+                        if (j == 0) {
+                            key = split1[j];
+                            suggestionMap.put(key, Lists.<String>newArrayList());
+                        } else {
+                            // NO need to perform explicit testing. Key will have to be initialized before this block is reached.
+                            suggestionMap.get(key).add(split1[j]);
+                        }
+
+                    }
+                }
+            }
+        }
+
+    }
+
+
     @Test
     public void testExtractSuggestion() throws Exception {
 
-        final List<Suggestion> suggestions = suggestionGenerator.extractSuggestion(
-                kikinNLPModule.processText("Stanford University is very good. I am in New York.Michael is a person"));
 
-        logger.info(Joiner.on("\n").join(suggestions));
+        for (String inputText : suggestionMap.keySet()) {
+            final List<Suggestion> suggestions = suggestionGenerator.extractSuggestion(
+                    kikinNLPModule.processText(
+                            inputText));
 
+            logger.info("For term {} \n, we found the following suggestion {}", inputText, Joiner.on("\n").join(
+                    suggestions));
 
-    }
+            // We need to assert that the expected suggestion is part of the top 5 suggestions.
+            assertTrue(doesSuggestionContainExpectedStrings(suggestions, suggestionMap.get(inputText)));
 
-
-    @Test
-    public void testExtractSuggestion1() throws Exception {
-
-        final List<Suggestion> suggestions = suggestionGenerator.extractSuggestion(
-                kikinNLPModule.processText("I love the movie, 'Pirates of the Carribean'."));
-
-        logger.info(Joiner.on("\n").join(suggestions));
+        }
 
 
     }
 
+    private static boolean doesSuggestionContainExpectedStrings(List<Suggestion> suggestions, List<String> strings) {
+        logger.info("Entering doesSuggestionContainExpectedStrings");
 
-    @Test
-    public void testExtractSuggestion2() throws Exception {
+        if (suggestions == null || suggestions.size() == 0) {
+            return false;
+        }
+        final List<Suggestion> partitionedSuggestion = Lists.partition(suggestions, 5).get(0);
+        for (String expectedSuggestion : strings) {
+            boolean valid = false;
+            for (Suggestion suggestion : partitionedSuggestion) {
 
-        final List<Suggestion> suggestions = suggestionGenerator.extractSuggestion(
-                kikinNLPModule.processText("Linear regression is a very good hypothesis tester."));
 
-        logger.info(Joiner.on("\n").join(suggestions));
+                final String trimmedSuggestion = CharMatcher.WHITESPACE.trimFrom(suggestion.getTerm());
+                final String trimmedExpectedSuggestion = CharMatcher.WHITESPACE.trimFrom(
+                        expectedSuggestion);
+                if (trimmedSuggestion.equalsIgnoreCase(trimmedExpectedSuggestion)) {
 
+                    valid = true;
+                    break;
 
+                }
+            }
+            if (!valid)
+                return false;
+        }
+
+        logger.info("Exiting doesSuggestionContainExpectedStrings");
+        return true;
     }
 
 
     @Test
-    public void testExtractSuggestion3() throws Exception {
-
-        final List<Suggestion> suggestions = suggestionGenerator.extractSuggestion(
-                kikinNLPModule.processText("The."));
-
-        logger.info(Joiner.on("\n").join(suggestions));
+    public void testExtractSuggestion7() throws Exception {
 
 
-    }
-
-    @Test
-    public void testExtractSuggestion4() throws Exception {
-
-        final List<Suggestion> suggestions = suggestionGenerator.extractSuggestion(
+        List<Suggestion> suggestions = suggestionGenerator.extractSuggestion(
                 kikinNLPModule.processText(
-                        "Dog saves all her puppies from a house fire, and put them to safety in one of firetrucks."));
+                        "Kate is one of Britain's most famous fashion exports. She hails from Croydon and ironically in October 2010, appeared on the cover of Bryan Ferry's Olympia."));
 
-        logger.info(Joiner.on("\n").join(suggestions));
-
-
-    }
-
-
-    @Test
-    public void testExtractSuggestion5() throws Exception {
-
-        final List<Suggestion> suggestions = suggestionGenerator.extractSuggestion(
-                kikinNLPModule.processText(
-                        "Stanford University is very good. I am in New York.Michael is a person."));
-
-        logger.info(Joiner.on("\n").join(suggestions));
-
-
-        Collections.sort(suggestions);
-
-        logger.info(Joiner.on("\n").join(suggestions));
-
-
-    }
-
-
-    @Test
-    public void testExtractSuggestion6() throws Exception {
-
-        final List<Suggestion> suggestions = suggestionGenerator.extractSuggestion(
-                kikinNLPModule.processText(
-                        "On the face of it, Senator Harry Reid’s explosive but flimsily sourced claim that Mitt Romney paid no income tax seems preposterous."));
-
-        logger.info(Joiner.on("\n").join(suggestions));
-
-
-        Collections.sort(suggestions);
 
         logger.info(Joiner.on("\n").join(suggestions));
 
@@ -138,7 +155,7 @@ public class SuggestionGeneratorImplTest {
 
         final List<Suggestion> suggestions = suggestionGenerator.extractSuggestion(
                 kikinNLPModule.processText(
-                        "On the face of it, Senator Harry Reid’s explosive but flimsily sourced claim that Mitt Romney paid no income tax seems preposterous."));
+                        "Kate is one of Britain's most famous fashion exports. She hails from Croydon and ironically in October 2010, appeared on the cover of Bryan Ferry's Olympia.."));
 
 
         for (Suggestion suggestion : suggestions) {

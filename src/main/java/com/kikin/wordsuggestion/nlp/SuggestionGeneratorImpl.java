@@ -25,10 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 public class SuggestionGeneratorImpl implements SuggestionGenerator {
@@ -48,7 +45,7 @@ public class SuggestionGeneratorImpl implements SuggestionGenerator {
     private static final Function<? super Suggestion, String> getSuggestionTexts = new Function<Suggestion, String>() {
         @Override
         public String apply(@Nullable Suggestion suggestion) {
-            return suggestion.getTerm();
+            return suggestion.getTerm().trim();
         }
     };
     private static final Predicate<? super String> nounPosFilter = new NounPosFilter();
@@ -74,6 +71,7 @@ public class SuggestionGeneratorImpl implements SuggestionGenerator {
 
         suggestionList.addAll(nounPhrasesNotIncluded);
 
+        Collections.sort(suggestionList);
 
         return suggestionList;
     }
@@ -119,16 +117,16 @@ public class SuggestionGeneratorImpl implements SuggestionGenerator {
 
                 final IndexedWord source = semanticGraphEdge.getSource();
                 final IndexedWord target = semanticGraphEdge.getTarget();
-                logger.info("Found relationship between {} and target {}", source,
+                logger.trace("Found relationship between {} and target {}", source,
                         target);
                 final GrammaticalRelation relation = semanticGraphEdge.getRelation();
-                logger.info("The relationship is {}", relation);
+                logger.trace("The relationship is {}", relation);
 
                 if (relation.equals(GrammaticalRelation.valueOf(NOUN_COMPOUND_MODIFIER))) {
 
                     final Integer sourceOffset = source.get(CoreAnnotations.TokenBeginAnnotation.class);
                     final Integer targetOffSet = target.get(CoreAnnotations.TokenBeginAnnotation.class);
-                    logger.info("The sourceoffset {} and targetoffset {}", sourceOffset, targetOffSet);
+                    logger.trace("The sourceoffset {} and targetoffset {}", sourceOffset, targetOffSet);
                     final Suggestion sourceSuggestion = suggestions.get(sourceOffset);
                     final Suggestion targetSuggestion = suggestions.get(targetOffSet);
                     if (sourceSuggestion != null && targetSuggestion != null) {
@@ -150,7 +148,7 @@ public class SuggestionGeneratorImpl implements SuggestionGenerator {
 
             }
             final Tree trees = coreMap.get(TreeCoreAnnotations.TreeAnnotation.class);
-            logger.info(trees.toString());
+            logger.trace(trees.toString());
 
             nounPhrases.addAll(extractNounPhrases(trees, Lists.<Suggestion>newArrayList()));
             //logger.trace(semanticGraph.toCompactString());

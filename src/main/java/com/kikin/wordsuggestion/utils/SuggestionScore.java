@@ -17,8 +17,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class SuggestionScore {
 
 
-    public static final double posScore = 2;
-    public static final double nerScore = 3;
+    public static final double posScore = 1.5;
+    public static final double nerScore = 4;
 
     /**
      * Score is a function of term length and the availability of Ner and Pos tags.
@@ -32,7 +32,9 @@ public class SuggestionScore {
     public static Double score(final Suggestion suggestion) {
 
         checkNotNull(suggestion);
-        double score = suggestion.getTerm().length();
+        // Need to reduce weight of Length. Try Logarithmic or provide score based on discrete intervals, with higher values
+        // incrementing by diminishing values.
+        double score = Math.log(suggestion.getTerm().length());
         if (suggestion.hasPosTag()) {
             score *= posScore;
         }

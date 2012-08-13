@@ -256,7 +256,7 @@
 
     </dependencies>
     <build>
-
+        <finalName>wordsuggestion</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -291,7 +291,7 @@
                 </configuration>
             </plugin>
 
-            <plugin>
+            <!--<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.2-beta-4</version>
@@ -303,11 +303,11 @@
 
                     </descriptorRefs>
 
-                    <!-- <archive>
+                    &lt;!&ndash; <archive>
                         <manifest>
                             <mainClass>org.sample.App</mainClass>
                         </manifest>
-                    </archive>-->
+                    </archive>&ndash;&gt;
                 </configuration>
                 <executions>
                     <execution>
@@ -317,7 +317,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
             <plugin>
                 <groupId>org.apache.tomcat.maven</groupId>
                 <artifactId>tomcat6-maven-plugin</artifactId>
