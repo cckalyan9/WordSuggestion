@@ -14,6 +14,7 @@ import java.util.List;
  * Time: 12:58 AM
  * Suggestion Object from the NLP Module.
  */
+@SuppressWarnings("UnusedDeclaration")
 public class Suggestion implements Comparable<Suggestion> {
 
     private static final String PROPER_NOUN = "NNP";
@@ -88,24 +89,24 @@ public class Suggestion implements Comparable<Suggestion> {
      */
     public boolean hasPosTag() {
 
-        return (this.getPosTag().equals(NO_VALUE)) ? false : true;
+        return (!this.getPosTag().equals(NO_VALUE));
     }
 
     public boolean hasNerTag() {
 
-        return (this.getNerTag().equals(NO_VALUE)) ? false : true;
+        return (!this.getNerTag().equals(NO_VALUE));
     }
 
     public boolean hasOffSetInformation() {
 
-        return (this.getOffset() == NO_OFFSET) ? false : true;
+        return (this.getOffset() != NO_OFFSET);
     }
 
 
     /**
      * This method should be used to create compound words.
      *
-     * @param other
+     * @param other - The other suggestion object that needs to be merged with this one.
      * @return - New Instance of suggestion and hence safe to manipulate outside the scope.Anyways Suggestion is immutable.
      */
     public Suggestion merge(Suggestion other) {
@@ -142,14 +143,13 @@ public class Suggestion implements Comparable<Suggestion> {
         Suggestion that = (Suggestion) o;
 
         if (suggestionTerm.offset != that.suggestionTerm.offset) return false;
-        if (!suggestionTerm.term.equals(that.suggestionTerm.term)) return false;
+        return this.getTerm().equals(that.getTerm());
 
-        return true;
     }
 
     @Override
     public int hashCode() {
-        int result = suggestionTerm.term.hashCode();
+        int result = this.getTerm().hashCode();
         result = 31 * result + suggestionTerm.offset;
         return result;
     }

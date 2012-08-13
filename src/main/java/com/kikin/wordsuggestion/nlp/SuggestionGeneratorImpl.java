@@ -59,6 +59,7 @@ public class SuggestionGeneratorImpl implements SuggestionGenerator {
         extractNouns(annotation, suggestions);
         final List<Suggestion> nounPhrases = Lists.newArrayList();
         extractNounPhrases(annotation, suggestions, nounPhrases);
+
         suggestionList.addAll(Sets.newHashSet(suggestions.values()));
 
         final SuggestionTextFilter suggestionTextFilter = new SuggestionTextFilter(

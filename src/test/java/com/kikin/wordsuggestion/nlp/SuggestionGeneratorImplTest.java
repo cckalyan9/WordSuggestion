@@ -61,9 +61,7 @@ public class SuggestionGeneratorImplTest {
         if (testVariables.getSuggestions() != null) {
             final String[] split = testVariables.getSuggestions().split(SUGGESTION_DELIMITER);
 
-            for (int i = 0; i < split.length; i++) {
-                String individualSuggestion = split[i];
-
+            for (String individualSuggestion : split) {
                 if (individualSuggestion != null) {
                     final String[] split1 = individualSuggestion.split(SUGGESTION_EXPECTATION_DELIMITER);
                     String key = null;
@@ -155,7 +153,7 @@ public class SuggestionGeneratorImplTest {
 
         final List<Suggestion> suggestions = suggestionGenerator.extractSuggestion(
                 kikinNLPModule.processText(
-                        "Kate is one of Britain's most famous fashion exports. She hails from Croydon and ironically in October 2010, appeared on the cover of Bryan Ferry's Olympia.."));
+                        "Kate is one of Britain's most famous fashion exports. She hails from Croydon and ironically in October 2010, appeared on the cover of Bryan Ferry's Olympia."));
 
 
         for (Suggestion suggestion : suggestions) {
