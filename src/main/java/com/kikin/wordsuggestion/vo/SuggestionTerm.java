@@ -1,6 +1,6 @@
 package com.kikin.wordsuggestion.vo;
 
-public class SuggestionTerm implements Comparable<SuggestionTerm> {
+class SuggestionTerm implements Comparable<SuggestionTerm> {
     final String term;//Positional information.
     final int offset;
 

@@ -38,8 +38,8 @@ public class KikinNLPModuleIImpl implements KikinNLPModule {
 
 
     private String DELIMITER = "";
-    protected final StanfordCoreNLP stanfordCoreNLP;
-    protected final Set<?> englishStopWordsSet;
+    private final StanfordCoreNLP stanfordCoreNLP;
+    private final Set<?> englishStopWordsSet;
 
     public KikinNLPModuleIImpl(List<ProcessSteps> nlpProcesses) {
 
@@ -63,8 +63,7 @@ public class KikinNLPModuleIImpl implements KikinNLPModule {
     @Override
     public Annotation processText(String context) {
 
-        final Annotation process = stanfordCoreNLP.process(context);
-        return process;
+        return stanfordCoreNLP.process(context);
     }
 
 
@@ -81,10 +80,7 @@ public class KikinNLPModuleIImpl implements KikinNLPModule {
 
         if (Strings.isNullOrEmpty(term) || term.trim().isEmpty())
             return true;
-        if (englishStopWordsSet.contains(term.toLowerCase())) {
-            return true;
-        }
-        return false;
+        return englishStopWordsSet.contains(term.toLowerCase());
     }
 
     @Override

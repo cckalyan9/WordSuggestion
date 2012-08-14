@@ -28,10 +28,6 @@ public class ProximityTextFilter implements Predicate<Suggestion> {
 
     @Override
     public boolean apply(@Nullable Suggestion suggestion) {
-        if (suggestion.getTerm().toLowerCase().contains(text.toLowerCase())) {
-            return true;
-
-        }
-        return false;
+        return suggestion.getTerm().toLowerCase().contains(text.toLowerCase());
     }
 }

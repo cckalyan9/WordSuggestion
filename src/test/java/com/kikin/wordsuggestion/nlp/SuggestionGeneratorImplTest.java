@@ -149,6 +149,21 @@ public class SuggestionGeneratorImplTest {
 
 
     @Test
+    public void testExtractSuggestion8() throws Exception {
+
+
+        List<Suggestion> suggestions = suggestionGenerator.extractSuggestion(
+                kikinNLPModule.processText(
+                        "Roy Hodgson says Olympics is a 'wake-up call' for players and fans."));
+
+
+        logger.info(Joiner.on("\n").join(suggestions));
+
+
+    }
+
+
+    @Test
     public void testScoringLogic() {
 
         final List<Suggestion> suggestions = suggestionGenerator.extractSuggestion(

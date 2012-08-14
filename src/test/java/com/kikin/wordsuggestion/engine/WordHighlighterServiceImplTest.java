@@ -24,7 +24,7 @@ import static org.junit.Assert.assertTrue;
  * Time: 11:43 AM
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/wordhighlighter.xml"})
+@ContextConfiguration(locations = {"/wordhighlighter-test.xml"})
 public class WordHighlighterServiceImplTest {
 
     private static Logger logger = LoggerFactory.getLogger(WordHighlighterServiceImplTest.class);

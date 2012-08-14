@@ -25,11 +25,13 @@ public class WordSuggestionInput {
 
     private final TouchParameters touchParameters;
 
+
+    //TODO: Assumed this is to available to me.
     private List<String> textsNearSelectedItem;
 
 
-    protected WordSuggestionInput(String selectedText, String context, String fullText, TouchParameters touchParameters,
-                                  List<String> textsNearSelectedItem) {
+    WordSuggestionInput(String selectedText, String context, String fullText, TouchParameters touchParameters,
+                        List<String> textsNearSelectedItem) {
 
         checkArgument(!Strings.isNullOrEmpty(selectedText));
         checkArgument(!Strings.isNullOrEmpty(context));
@@ -69,9 +71,8 @@ public class WordSuggestionInput {
         WordSuggestionInput that = (WordSuggestionInput) o;
 
         if (context != null ? !context.equals(that.context) : that.context != null) return false;
-        if (selectedText != null ? !selectedText.equals(that.selectedText) : that.selectedText != null) return false;
+        return !(selectedText != null ? !selectedText.equals(that.selectedText) : that.selectedText != null);
 
-        return true;
     }
 
     @Override

@@ -32,7 +32,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 @Path("/core")
 public class WordHighligterCoreResource {
 
-    Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static Logger logger = LoggerFactory.getLogger(WordHighligterCoreResource.class);
 
 
     private final WordHighlighterService wordHighlighterService;
