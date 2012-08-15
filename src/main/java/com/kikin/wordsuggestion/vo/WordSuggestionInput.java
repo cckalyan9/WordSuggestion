@@ -25,6 +25,8 @@ public class WordSuggestionInput {
 
     private final TouchParameters touchParameters;
 
+
+    //TODO: Assumed this is to available to me.
     private List<String> textsNearSelectedItem;
 
 
