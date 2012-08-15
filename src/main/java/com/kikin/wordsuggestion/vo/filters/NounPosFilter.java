@@ -18,6 +18,6 @@ public class NounPosFilter implements Predicate<String> {
     @Override
     public boolean apply(@Nonnull String s) {
 
-        return (s.startsWith("NN")) ? true : false;
+        return (s.startsWith("NN"));
     }
 }

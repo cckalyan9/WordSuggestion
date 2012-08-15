@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
  * Test class.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/wordhighlighter.xml"})
+@ContextConfiguration(locations = {"/wordhighlighter-test.xml"})
 public class KikinNLPModuleIImplTest {
 
 

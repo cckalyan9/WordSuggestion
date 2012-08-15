@@ -17,8 +17,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class SuggestionScore {
 
 
-    public static final double posScore = 1.5;
-    public static final double nerScore = 4;
+    private static final double posScore = 1.5;
+    private static final double nerScore = 4;
 
     /**
      * Score is a function of term length and the availability of Ner and Pos tags.
