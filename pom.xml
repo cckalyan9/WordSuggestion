@@ -14,7 +14,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.framework.version>3.0.0.RELEASE</spring.framework.version>
-        <jersey-version>1.2</jersey-version>
+        <jersey-version>1.8</jersey-version>
     </properties>
 
     <profiles>
@@ -72,7 +72,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.framework.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
@@ -120,8 +124,37 @@
         <dependency>
             <groupId>com.sun.jersey.jersey-test-framework</groupId>
             <artifactId>jersey-test-framework-grizzly2</artifactId>
-            <version>1.6</version>
+            <version>1.8</version>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Jersey + Spring -->
+        <dependency>
+            <groupId>com.sun.jersey.contribs</groupId>
+            <artifactId>jersey-spring</artifactId>
+            <version>1.8</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -239,7 +272,7 @@
 
         <dependency>
             <groupId>com.stanford</groupId>
-            <artifactId>corenlp-models</artifactId>
+            <artifactId>corenlp-edu.stanford.models</artifactId>
             <version>4.2</version>
         </dependency>
         <dependency>
@@ -323,9 +356,7 @@
                 <artifactId>tomcat6-maven-plugin</artifactId>
                 <version>2.0-SNAPSHOT</version>
                 <configuration>
-                    <url>http://localhost:8080/manager/html</url>
-                    <name>user</name>
-                    <password>password</password>
+                    <server>TomcatServer</server>
                 </configuration>
             </plugin>
 
@@ -350,6 +381,21 @@
             <url>http://download.java.net/maven/2/</url>
             <layout>default</layout>
         </repository>
+
     </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>apache.snapshots</id>
+            <name>Apache Snapshots</name>
+            <url>http://repository.apache.org/content/groups/snapshots-group/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
 
 </project>

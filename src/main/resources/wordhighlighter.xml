@@ -31,7 +31,7 @@
                 <value>DCOREF</value>
             </list>
         </constructor-arg>
-        <constructor-arg name="stopWordResource" value="stopwords.txt"/>
+        <constructor-arg name="stopWordResource" value="classpath:stopwords.txt"/>
     </bean>
 
     <bean id="nlpModuleWithoutNER" class="com.kikin.wordsuggestion.nlp.KikinNLPModuleIImpl" name="nlpModuleWithoutNER"
@@ -46,7 +46,7 @@
                 <value>PARSE</value>
             </list>
         </constructor-arg>
-        <constructor-arg name="stopWordResource" value="stopwords.txt"/>
+        <constructor-arg name="stopWordResource" value="classpath:stopwords.txt"/>
 
     </bean>
 
@@ -67,7 +67,7 @@
         <property name="ignoreUnresolvablePlaceholders" value="true"/>
     </bean>
 
-    <util:properties id="posProperties" location="pos.properties"/>
+    <util:properties id="posProperties" location="classpath:pos.properties"/>
 
 
 </beans>
