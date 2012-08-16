@@ -3,20 +3,23 @@ package com.kikin.wordsuggestion.nlp;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.google.common.io.Files;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.logging.StanfordRedwoodConfiguration;
-import org.apache.lucene.analysis.StopAnalyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.TermAttribute;
 import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -40,8 +43,14 @@ public class KikinNLPModuleIImpl implements KikinNLPModule {
     private String DELIMITER = "";
     private final StanfordCoreNLP stanfordCoreNLP;
     private final Set<?> englishStopWordsSet;
+    private final Set<String> auxStopWordsList;
 
-    public KikinNLPModuleIImpl(List<ProcessSteps> nlpProcesses) {
+
+    /**
+     * @param nlpProcesses     - Indicates the list of processed that the NLP module shoudl perform
+     * @param stopWordResource - Any additional stop words list.
+     */
+    public KikinNLPModuleIImpl(List<ProcessSteps> nlpProcesses, Resource stopWordResource) {
 
         Properties nlpProperties = new Properties();
 
@@ -57,7 +66,23 @@ public class KikinNLPModuleIImpl implements KikinNLPModule {
         StanfordRedwoodConfiguration.minimalSetup();
         stanfordCoreNLP = new StanfordCoreNLP(nlpProperties);
 
-        englishStopWordsSet = StopAnalyzer.ENGLISH_STOP_WORDS_SET;
+        englishStopWordsSet = StandardAnalyzer.STOP_WORDS_SET;
+        auxStopWordsList = Sets.newHashSet();
+
+        if (stopWordResource != null) {
+
+            try {
+                List<String> auxStopWords = Files.readLines(stopWordResource.getFile(), Charset.defaultCharset());
+                for (String string : auxStopWords) {
+
+                    auxStopWordsList.add(string.toLowerCase());
+
+                }
+            } catch (IOException e) {
+                logger.error(" Exception occurred while loading stopwords list  " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -80,7 +105,7 @@ public class KikinNLPModuleIImpl implements KikinNLPModule {
 
         if (Strings.isNullOrEmpty(term) || term.trim().isEmpty())
             return true;
-        return englishStopWordsSet.contains(term.toLowerCase());
+        return englishStopWordsSet.contains(term.toLowerCase()) || auxStopWordsList.contains(term.toLowerCase());
     }
 
     @Override

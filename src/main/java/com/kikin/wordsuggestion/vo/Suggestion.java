@@ -1,6 +1,7 @@
 package com.kikin.wordsuggestion.vo;
 
 import com.google.common.collect.Lists;
+import com.kikin.wordsuggestion.utils.StringConstants;
 import com.kikin.wordsuggestion.utils.SuggestionScore;
 
 import java.util.Collections;
@@ -64,7 +65,7 @@ public class Suggestion implements Comparable<Suggestion> {
             Collections.sort(mergedSuggestions);
             StringBuilder termBuilder = new StringBuilder();
             for (SuggestionTerm mergedSuggestion : mergedSuggestions) {
-                termBuilder.append(mergedSuggestion.getTerm()).append(" ");
+                termBuilder.append(mergedSuggestion.getTerm()).append(StringConstants.SPACE);
             }
             return termBuilder.toString();
         }

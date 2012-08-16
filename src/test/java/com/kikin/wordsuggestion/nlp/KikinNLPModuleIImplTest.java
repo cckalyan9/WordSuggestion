@@ -59,6 +59,7 @@ public class KikinNLPModuleIImplTest {
     public void testStopWord() {
 
         assertTrue(kikinNLPModule.isStopWord("the"));
+        assertTrue(kikinNLPModule.isStopWord("has"));
         assertTrue(kikinNLPModule.isStopWord("a"));
         assertTrue(kikinNLPModule.isStopWord("If"));
         assertTrue(kikinNLPModule.isStopWord("to"));
@@ -77,16 +78,10 @@ public class KikinNLPModuleIImplTest {
     public void testRemoveStopWords() throws IOException {
 
         List<String> tokens = kikinNLPModule.filterStopWords("I am the man, who nobody wants to mess with");
-
         logger.info("Returned token after filetering {}", tokens.toString());
-
         assertFalse(tokens.contains("the") || tokens.contains("to") || tokens.contains("with"));
-
         tokens = kikinNLPModule.filterStopWords("I am THe man, who nobody wants to mess with");
-
-
         logger.info("Returned token after filetering {}", tokens.toString());
-
         assertFalse(tokens.contains("THe") || tokens.contains("to") || tokens.contains("with"));
     }
 }

@@ -2,7 +2,7 @@ package com.kikin.wordsuggestion.vo.filters;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
-import com.kikin.wordsuggestion.nlp.SuggestionGeneratorImpl;
+import com.kikin.wordsuggestion.utils.StringConstants;
 import com.kikin.wordsuggestion.vo.Suggestion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +34,7 @@ public class SuggestionTextFilter implements Predicate<Suggestion> {
     public boolean apply(@Nonnull Suggestion suggestion) {
 
 
-        if (suggestion.getTerm().trim().split(SuggestionGeneratorImpl.SPACE).length == 0) {
+        if (suggestion.getTerm().trim().split(StringConstants.SPACE).length == 0) {
             return false;
         }
 

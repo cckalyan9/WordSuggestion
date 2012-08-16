@@ -164,11 +164,44 @@ public class SuggestionGeneratorImplTest {
 
 
     @Test
+    public void testExtractSuggestion9() throws Exception {
+
+
+        final List<Suggestion> suggestions = suggestionGenerator.extractSuggestion(
+                kikinNLPModule.processText(
+                        "Robert Pattinson joining Naomi Watts  in 'Queen of the Desert."));
+
+
+        for (Suggestion suggestion : suggestions) {
+            logger.info(suggestion.toString());
+        }
+
+    }
+
+    @Test
+    public void testExtractSuggestion10() throws Exception {
+
+
+        final List<Suggestion> suggestions = suggestionGenerator.extractSuggestion(
+                kikinNLPModule.processText(
+                        "Universal has decided to shelf its planned Snow White and the Huntsman sequel and is instead "
+                                + "focusing on a solo Huntsman  movie starring Chris Hemsworth.Kristen Stewart will not be invited to return if the follow up "
+                                + "goes forward"));
+
+
+        for (Suggestion suggestion : suggestions) {
+            logger.info(suggestion.toString());
+        }
+
+    }
+
+
+    @Test
     public void testScoringLogic() {
 
         final List<Suggestion> suggestions = suggestionGenerator.extractSuggestion(
                 kikinNLPModule.processText(
-                        "Kate is one of Britain's most famous fashion exports. She hails from Croydon and ironically in October 2010, appeared on the cover of Bryan Ferry's Olympia."));
+                        "Robert Pattinson joining Naomi Watts  in 'Queen of the Desert."));
 
 
         for (Suggestion suggestion : suggestions) {

@@ -1,6 +1,7 @@
 package com.kikin.wordsuggestion.vo.filters;
 
 import com.google.common.base.Predicate;
+import com.kikin.wordsuggestion.utils.StringConstants;
 import com.kikin.wordsuggestion.vo.Suggestion;
 
 import javax.annotation.Nonnull;
@@ -20,6 +21,7 @@ public class ProximityTextFilter implements Predicate<Suggestion> {
 
     private final String text;
 
+
     public ProximityTextFilter(@Nonnull String text) {
         checkNotNull(text);
         this.text = text;
@@ -28,6 +30,12 @@ public class ProximityTextFilter implements Predicate<Suggestion> {
 
     @Override
     public boolean apply(@Nullable Suggestion suggestion) {
-        return suggestion.getTerm().toLowerCase().contains(text.toLowerCase());
+        String[] split = suggestion.getTerm().toLowerCase().split(StringConstants.SPACE);
+        for (String s : split) {
+            if (s.equalsIgnoreCase(text)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

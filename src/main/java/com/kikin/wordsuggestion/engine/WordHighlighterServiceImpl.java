@@ -66,7 +66,7 @@ public class WordHighlighterServiceImpl implements WordHighlighterService {
                 Collections.sort(filteredSuggestion);
 
                 for (Suggestion suggestion : filteredSuggestion) {
-                    if (!returnValue.contains(suggestion)) {
+                    if (!returnValue.contains(suggestion.getTerm())) {
                         returnValue.add(suggestion.getTerm());
                     }
                 }
@@ -74,13 +74,13 @@ public class WordHighlighterServiceImpl implements WordHighlighterService {
 
             //Add the rest of the suggestions.
 
-            Collections.sort(suggestions);
+            /*  Collections.sort(suggestions);
 
             for (Suggestion suggestion : suggestions) {
                 if (!returnValue.contains(suggestion.getTerm())) {
                     returnValue.add(suggestion.getTerm());
                 }
-            }
+            }*/
 
 
         } else {

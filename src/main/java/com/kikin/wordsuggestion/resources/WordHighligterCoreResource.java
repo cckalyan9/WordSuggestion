@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.kikin.wordsuggestion.engine.WordHighlighterService;
 import com.kikin.wordsuggestion.vo.TouchParameters;
+import com.kikin.wordsuggestion.vo.Rects;
 import com.kikin.wordsuggestion.vo.WordSuggestionInput;
 import com.kikin.wordsuggestion.vo.WordSuggestionInputBuilder;
 import org.slf4j.Logger;
@@ -57,26 +58,27 @@ public class WordHighligterCoreResource {
     }
 
     /**
-     * @param selectedText     - The text highlighted in the touch based device
-     * @param context          - The context of the highlighted text.
-     * @param fullText         - The full text of the article.
-     * @param textsInProximity - The list of texts that occurs close to the highlighted text ordered by proximity desc.Format: Json
-     * @param appliedPressure  - The pressure applied as part of the touch interaction by the user.
-     * @param duration         - The duration of the application of the pressure.
+     * @param context         - The context of the highlighted text.
+     * @param fullText        - The full text of the article.
+     * @param textBlocks      - The bounding rectangle of texts that occurs near touch location.Format: Json
+     * @param appliedPressure - The pressure applied as part of the touch interaction by the user.
+     * @param duration        - The duration of the application of the pressure.
      * @return
      */
     @GET
     @Path("/suggestions")
     @Produces({MediaType.APPLICATION_JSON, "application/x-javascript"})
-    public final String getWordSuggestions(@QueryParam("selectedText")
-                                           final String selectedText, @QueryParam("context")
-    final String context, @QueryParam("fullText")
-    final String fullText, @QueryParam("textsInProximity") final String textsInProximity, @QueryParam("appliedPressure")
-    final double appliedPressure, @QueryParam("duration")
+    public final String getWordSuggestions(@QueryParam("context")
+                                           final String context, @QueryParam("fullText")
+    final String fullText, @QueryParam("textBlocks") final String textBlocks, @QueryParam("touchLocation")
+    final double touchLocationX, @QueryParam("touchLocation")
+    final double touchLocationY,
+                                           @QueryParam("appliedPressure")
+                                           final double appliedPressure, @QueryParam("duration")
     final double duration) {
 
         try {
-            checkArgument(!Strings.isNullOrEmpty(selectedText), "Selected Text cannot be empty");
+            checkArgument(!Strings.isNullOrEmpty(textBlocks), "Text blocks cannot be empty");
             checkArgument(!Strings.isNullOrEmpty(context), "Context cannot be empty");
             checkArgument(!Strings.isNullOrEmpty(fullText), "Full text cannot be empty");
         } catch (IllegalArgumentException e) {
@@ -87,21 +89,25 @@ public class WordHighligterCoreResource {
         }
 
 
-        logger.info("Entering getWordSuggestions for parameters {}, {}, {}",
-                new String[]{selectedText, context, String.valueOf(fullText.length())});
-
-        logger.info("Touch parameters {} , {}", appliedPressure, duration);
-
-        Type collectionType = new TypeToken<Collection<String>>() {
+        Type collectionType = new TypeToken<Collection<Rects>>() {
         } // end new
                 .getType();
 
-        List<String> textsNearSelectedItem = new Gson().fromJson(textsInProximity, collectionType);
+        List<Rects> textsNearSelectedItem = new Gson().fromJson(textBlocks, collectionType);
+
+        logger.info("Entering getWordSuggestions for parameters {}, {}, {}",
+                new String[]{textsNearSelectedItem.toString(), context, String.valueOf(fullText.length())});
+
+        logger.info("Touch parameters {} , {}", appliedPressure, duration);
 
 
-        WordSuggestionInput wordSuggestionInput = new WordSuggestionInputBuilder().setSelectedText(selectedText)
-                .setContext(context).setFullText(fullText).setTouchParameters(new TouchParameters(appliedPressure,
-                        duration)).setTextsNearSelectedItem(textsNearSelectedItem).createWordSuggestionInput();
+        WordSuggestionInput wordSuggestionInput = new WordSuggestionInputBuilder().setWords(textsNearSelectedItem)
+                .setContext(context).setFullText(fullText).setTouchParameters(new TouchParameters(touchLocationX,
+                        touchLocationY,
+                        appliedPressure,
+                        duration))
+                        //.setWords(textsNearSelectedItem)
+                .createWordSuggestionInput();
 
         logger.info("Generated wordSuggestionInput {}", wordSuggestionInput.toString());
 

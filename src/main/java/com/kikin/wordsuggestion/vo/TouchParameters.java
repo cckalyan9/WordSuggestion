@@ -1,5 +1,7 @@
 package com.kikin.wordsuggestion.vo;
 
+import java.awt.geom.Point2D;
+
 /**
  * Created by IntelliJ IDEA.
  *
@@ -10,6 +12,7 @@ package com.kikin.wordsuggestion.vo;
  */
 public class TouchParameters {
 
+    private final Point2D touchLocation;
     private final double appliedPressure;
     private final double duration;
 
@@ -19,8 +22,8 @@ public class TouchParameters {
     private static final double MIN_DURATION = 1.0;
 
 
-    public TouchParameters(double appliedPressure, double duration) {
-
+    public TouchParameters(double touchLocationX, double touchLocationY, double appliedPressure, double duration) {
+        this.touchLocation = new Point2D.Double(touchLocationX, touchLocationY);
         if (appliedPressure <= 0) {
             appliedPressure = MIN_PRESSURE;
         }
@@ -45,6 +48,10 @@ public class TouchParameters {
 
     public double getIntent() {
         return intent;
+    }
+
+    public Point2D getTouchLocation() {
+        return touchLocation;
     }
 
     @Override

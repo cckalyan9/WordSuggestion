@@ -35,6 +35,8 @@ public class SuggestionScore {
         // Need to reduce weight of Length. Try Logarithmic or provide score based on discrete intervals, with higher values
         // incrementing by diminishing values.
         double score = Math.log(suggestion.getTerm().length());
+
+
         if (suggestion.hasPosTag()) {
             score *= posScore;
         }

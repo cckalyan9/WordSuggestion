@@ -6,6 +6,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.kikin.wordsuggestion.utils.StringConstants;
 import com.kikin.wordsuggestion.vo.Suggestion;
 import com.kikin.wordsuggestion.vo.filters.NounPosFilter;
 import com.kikin.wordsuggestion.vo.filters.SuggestionTextFilter;
@@ -31,6 +32,7 @@ import java.util.*;
 public class SuggestionGeneratorImpl implements SuggestionGenerator {
 
     private static Logger logger = LoggerFactory.getLogger(SuggestionGeneratorImpl.class);
+    private static final int MAXIMUM_NOUN_PHRASE_SIZE = 6;
 
 
     // Although not static, the value injected variables should be treated as such.
@@ -40,7 +42,6 @@ public class SuggestionGeneratorImpl implements SuggestionGenerator {
     private String NOUN_COMPOUND_MODIFIER;
     @Value("#{posProperties.NOUN_PHRASE}")
     private String NOUN_PHRASE;
-    public static final String SPACE = " ";
     private static Predicate<? super Suggestion> termFilter;
     private static final Function<? super Suggestion, String> getSuggestionTexts = new Function<Suggestion, String>() {
         @Override
@@ -151,14 +152,14 @@ public class SuggestionGeneratorImpl implements SuggestionGenerator {
             final Tree trees = coreMap.get(TreeCoreAnnotations.TreeAnnotation.class);
             logger.trace(trees.toString());
 
-            nounPhrases.addAll(extractNounPhrases(trees, Lists.<Suggestion>newArrayList()));
+            nounPhrases.addAll(extractPhrasesFromParsedTree(trees, Lists.<Suggestion>newArrayList()));
             //logger.trace(semanticGraph.toCompactString());
 
 
         }
     }
 
-    private List<Suggestion> extractNounPhrases(Tree trees, List<Suggestion> nounPhrases) {
+    private List<Suggestion> extractPhrasesFromParsedTree(Tree trees, List<Suggestion> nounPhrases) {
 
         final String label = trees.label().value();
 
@@ -169,7 +170,8 @@ public class SuggestionGeneratorImpl implements SuggestionGenerator {
                     posTagging);
 
             final Collection<String> nounConstructs = Collections2.filter(posTagging, nounPosFilter);
-            if (nounConstructs.size() > 1) {
+            if (nounConstructs.size() > 1 && (childrensAsPhrases.getTerm().split(
+                    " ").length < MAXIMUM_NOUN_PHRASE_SIZE)) {
 
                 nounPhrases.add(childrensAsPhrases);
             }
@@ -177,7 +179,7 @@ public class SuggestionGeneratorImpl implements SuggestionGenerator {
         Tree[] kids = trees.children();
         if (kids != null) {
             for (Tree kid : kids) {
-                extractNounPhrases(kid, nounPhrases);
+                extractPhrasesFromParsedTree(kid, nounPhrases);
             }
         }
 
@@ -190,7 +192,7 @@ public class SuggestionGeneratorImpl implements SuggestionGenerator {
         for (int i = 0; i < children.length; i++) {
             final Tree child1 = children[i];
             if (!child1.toString().startsWith("("))
-                child.append(child1.label().value()).append(SPACE);
+                child.append(child1.label().value()).append(StringConstants.SPACE);
             else
                 posTagging.add(child1.label().value());
 
