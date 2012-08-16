@@ -150,7 +150,7 @@ public class SuggestionGeneratorImpl implements SuggestionGenerator {
 
             }
             final Tree trees = coreMap.get(TreeCoreAnnotations.TreeAnnotation.class);
-            logger.trace(trees.toString());
+            logger.info(trees.toString());
 
             nounPhrases.addAll(extractPhrasesFromParsedTree(trees, Lists.<Suggestion>newArrayList()));
             //logger.trace(semanticGraph.toCompactString());

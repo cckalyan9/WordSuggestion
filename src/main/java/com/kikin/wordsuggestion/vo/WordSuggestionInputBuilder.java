@@ -18,6 +18,11 @@ public class WordSuggestionInputBuilder {
 
     private List<Rects> rectangles;
 
+    // Parameter, that stores if the touch point is with in bounds of the rectangle that holds the selected text.
+    // This parameter, will later be used to check if Suggestion is necessary. If touch point is within bounds and the
+    // selected text is proper noun, there is no need to provide any suggestion.
+    private boolean isTouchPointInsideSelectedText = false;
+
 
     public WordSuggestionInputBuilder setContext(String context) {
         this.context = context;
@@ -55,7 +60,7 @@ public class WordSuggestionInputBuilder {
 
         // Words near touch point is mandatory.
         return new WordSuggestionInput((wordsNearTouchPoint.get(0)), context, fullText, touchParameters,
-                wordsNearTouchPoint);
+                wordsNearTouchPoint, isTouchPointInsideSelectedText);
     }
 
 
@@ -68,6 +73,15 @@ public class WordSuggestionInputBuilder {
         }
 
         Collections.sort(rectsList, new ProximityValueComparator());
+
+        // Check if word is inside the
+
+        if (rectsList.get(0).getRectangle().contains(touchParameters.getTouchLocation())) {
+
+            isTouchPointInsideSelectedText = true;
+        }
+
+
         return Lists.newArrayList(Collections2.transform(rectsList, WORD_STRING_FUNCTION));
     }
 

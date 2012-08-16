@@ -50,8 +50,10 @@ public class WordHighlighterServiceImpl implements WordHighlighterService {
         checkNotNull(wordSuggestionInput);
         //Check the entropy of the highlighted word, provide suggestion if the word is in a set of commmon stop words.
         final boolean stopWord = kikinNLPModule.isStopWord(wordSuggestionInput.getSelectedText());
+
         final ArrayList<String> returnValue = Lists.newArrayList();
-        if (stopWord || forceSuggestion) {
+        // It the user selected a stop word or if touch point  is outside selected text or if the parameter force suggestion is true.
+        if (stopWord || !wordSuggestionInput.isTouchPointInsideSelectedText() || forceSuggestion) {
             // Get suggestion based on context.
             final Annotation annotation = kikinNLPModule.processText(wordSuggestionInput.getContext());
             final List<Suggestion> suggestions = suggestionGenerator.extractSuggestion(annotation);

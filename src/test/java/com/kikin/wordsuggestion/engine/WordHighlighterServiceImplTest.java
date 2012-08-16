@@ -103,18 +103,102 @@ public class WordHighlighterServiceImplTest {
         } // end new
                 .getType();
 
-        String jsonArr = " [{ 'word': 'Watts',  'top': 200,  'left': 120,  'right': 140,  'bottom': 220   },{ 'word': 'in',  'top': 200,  'left': 150,  'right': 160,  'bottom': 220   }, "
-                + "{   'word': 'Naomi',  'top': 200,  'left': 90,   'right': 105,  'bottom': 220  }, "
-                + "{   'word': 'Hollywood',  'top': 240,  'left': 110,   'right': 140,  'bottom': 260  }]";
+        String jsonArr = " [{ 'word': 'Chris',  'top': 230,  'left': 140,  'right': 170,  'bottom': 250   },"
+                + "{ 'word': 'Huntsman',  'top': 200,  'left': 230,  'right': 250,  'bottom': 220   }, "
+                + "{   'word': 'Hemsworth',  'top': 230,  'left': 180,   'right': 210,  'bottom': 250  }, "
+                + "{   'word': 'Kristen',  'top': 230,  'left': 220,   'right': 240,  'bottom': 250  }, "
+                + "{   'word': 'Stewart',  'top': 230,  'left': 250,   'right': 270,  'bottom': 250  }, "
+                + "{'word': 'Sequel',  'top': 200,  'left': 270,   'right': 290,  'bottom': 220  }"
+                + "]";
+
+
         List<Rects> textsNearSelectedItem = new Gson().fromJson(jsonArr, collectionType);
-        // Touch parameters are closer to the term "has" than to "Universal"
+        // Touch parameters are Slightly closer to Kristen than to Huntsman
         WordSuggestionInput wordSuggestionInput = new WordSuggestionInputBuilder().setWords(textsNearSelectedItem)
-                .setContext("Robert Pattinson joining Naomi Watts  in 'Queen of the Desert.")
+                .setContext(
+                        "Universal has decided to shelf its planned Snow White and the Huntsman sequel and is instead \"\n"
+                                + "                                + \"focusing on a solo Huntsman  movie starring Chris Hemsworth.Kristen Stewart will not be invited to return if the follow up \"\n"
+                                + "                                + \"goes forward")
                         // Touch set closest to In.
-                .setTouchParameters(new TouchParameters(155.0, 203.0, 0, 0))
+                .setTouchParameters(new TouchParameters(235.0, 224.0, 0, 0))
                 .createWordSuggestionInput();
         final List<String> suggestions = wordHighlighterService.getSuggestions(wordSuggestionInput, false, 5);
         assertTrue(suggestions.size() > 0);
+        logger.info(Joiner.on("\n").join(suggestions));
+    }
+
+
+    /**
+     * Same as testGetSuggestions_Ambiguity, but this time the touch point is slightly closer to Kristen than Huntsman
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testGetSuggestions_Ambiguity2() throws Exception {
+
+        Type collectionType = new TypeToken<Collection<Rects>>() {
+        } // end new
+                .getType();
+
+        String jsonArr = " [{ 'word': 'Chris',  'top': 230,  'left': 140,  'right': 170,  'bottom': 250   },"
+                + "{ 'word': 'Huntsman',  'top': 200,  'left': 230,  'right': 250,  'bottom': 220   }, "
+                + "{   'word': 'Hemsworth',  'top': 230,  'left': 180,   'right': 210,  'bottom': 250  }, "
+                + "{   'word': 'Kristen',  'top': 230,  'left': 220,   'right': 240,  'bottom': 250  }, "
+                + "{   'word': 'Stewart',  'top': 230,  'left': 250,   'right': 270,  'bottom': 250  }, "
+                + "{'word': 'Sequel',  'top': 200,  'left': 270,   'right': 290,  'bottom': 220  }"
+                + "]";
+
+
+        List<Rects> textsNearSelectedItem = new Gson().fromJson(jsonArr, collectionType);
+        // Touch parameters are Slightly closer to Kristen than to Huntsman
+        WordSuggestionInput wordSuggestionInput = new WordSuggestionInputBuilder().setWords(textsNearSelectedItem)
+                .setContext(
+                        "Universal has decided to shelf its planned Snow White and the Huntsman sequel and is instead \"\n"
+                                + "                                + \"focusing on a solo Huntsman  movie starring Chris Hemsworth.Kristen Stewart will not be invited to return if the follow up \"\n"
+                                + "                                + \"goes forward")
+                        // Touch set closest to In.
+                .setTouchParameters(new TouchParameters(235.0, 226.0, 0, 0))
+                .createWordSuggestionInput();
+        final List<String> suggestions = wordHighlighterService.getSuggestions(wordSuggestionInput, false, 5);
+        assertTrue(suggestions.size() > 0);
+        logger.info(Joiner.on("\n").join(suggestions));
+    }
+
+
+    /**
+     * In this case, the user have clearly selected Kristen and hence the system will not provide any suggestion, unless the
+     * force suggestion parameter is true.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testGetSuggestions_ClearIntent_NoSuggestion() throws Exception {
+
+        Type collectionType = new TypeToken<Collection<Rects>>() {
+        } // end new
+                .getType();
+
+        String jsonArr = " [{ 'word': 'Chris',  'top': 230,  'left': 140,  'right': 170,  'bottom': 250   },"
+                + "{ 'word': 'Huntsman',  'top': 200,  'left': 230,  'right': 250,  'bottom': 220   }, "
+                + "{   'word': 'Hemsworth',  'top': 230,  'left': 180,   'right': 210,  'bottom': 250  }, "
+                + "{   'word': 'Kristen',  'top': 230,  'left': 220,   'right': 240,  'bottom': 250  }, "
+                + "{   'word': 'Stewart',  'top': 230,  'left': 250,   'right': 270,  'bottom': 250  }, "
+                + "{'word': 'Sequel',  'top': 200,  'left': 270,   'right': 290,  'bottom': 220  }"
+                + "]";
+
+
+        List<Rects> textsNearSelectedItem = new Gson().fromJson(jsonArr, collectionType);
+        // Touch parameters are Slightly closer to Kristen than to Huntsman
+        WordSuggestionInput wordSuggestionInput = new WordSuggestionInputBuilder().setWords(textsNearSelectedItem)
+                .setContext(
+                        "Universal has decided to shelf its planned Snow White and the Huntsman sequel and is instead \"\n"
+                                + "                                + \"focusing on a solo Huntsman  movie starring Chris Hemsworth.Kristen Stewart will not be invited to return if the follow up \"\n"
+                                + "                                + \"goes forward")
+                        // Touch set closest to In.
+                .setTouchParameters(new TouchParameters(230.0, 240.0, 0, 0))
+                .createWordSuggestionInput();
+        final List<String> suggestions = wordHighlighterService.getSuggestions(wordSuggestionInput, false, 5);
+        assertTrue(suggestions.size() == 0);
         logger.info(Joiner.on("\n").join(suggestions));
     }
 

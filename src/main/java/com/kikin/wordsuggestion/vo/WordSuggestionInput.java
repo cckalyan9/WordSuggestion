@@ -29,9 +29,11 @@ public class WordSuggestionInput {
     //TODO: Assumed this is to available to me.
     private List<String> textsNearSelectedItem;
 
+    private boolean isTouchPointInsideSelectedText;
+
 
     WordSuggestionInput(String selectedText, String context, String fullText, TouchParameters touchParameters,
-                        List<String> textsNearSelectedItem) {
+                        List<String> textsNearSelectedItem, boolean isTouchPointInsideSelectedText) {
 
         checkArgument(!Strings.isNullOrEmpty(selectedText));
         checkArgument(!Strings.isNullOrEmpty(context));
@@ -41,6 +43,7 @@ public class WordSuggestionInput {
         this.fullText = fullText;
         this.touchParameters = touchParameters;
         this.textsNearSelectedItem = textsNearSelectedItem;
+        this.isTouchPointInsideSelectedText = isTouchPointInsideSelectedText;
     }
 
     public String getSelectedText() {
@@ -61,6 +64,10 @@ public class WordSuggestionInput {
 
     public List<String> getTextsNearSelectedItem() {
         return textsNearSelectedItem;
+    }
+
+    public boolean isTouchPointInsideSelectedText() {
+        return isTouchPointInsideSelectedText;
     }
 
     @Override

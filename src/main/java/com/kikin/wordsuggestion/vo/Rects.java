@@ -86,6 +86,8 @@ public class Rects {
         if (rectangle == null) {
             rectangle = new Rectangle2D.Double(left, top, (right - left), (bottom - top));
         }
+
+
         return rectangle;
     }
 
